@@ -3,11 +3,11 @@ use warnings;
 use MNIST;
 
 make_mnist_csv(
-  "mnist_train.cvs",
+  "mnist_train.csv",
   "train-images.idx3-ubyte",
   "train-labels.idx1-ubyte");
 make_mnist_csv(
-  "mnist_test.cvs",
+  "mnist_test.csv",
   "t10k-images.idx3-ubyte",
   "t10k-labels.idx1-ubyte");
 
