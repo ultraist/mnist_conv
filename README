@@ -1,41 +1,41 @@
-MNIST idx�t�H�[�}�b�g�ϊ��c�[���Ƃ�����Ƃ����e�X�g
+﻿MNIST idxフォーマット変換ツールとちょっとしたテスト
 
 MNIST: http://yann.lecun.com/exdb/mnist/
 
-* �K�v
+* 必要
 train-images-idx3-ubyte.gz:  training set images (9912422 bytes)
 train-labels-idx1-ubyte.gz:  training set labels (28881 bytes)
 t10k-images-idx3-ubyte.gz:   test set images (1648877 bytes)
 t10k-labels-idx1-ubyte.gz:   test set labels (4542 bytes) 
 File::Binary
-(gz�͓W�J����)
+(gzは展開する)
 
-* �I�v�V����
-Imager (conv_image.pl�p)
+* オプション
+Imager (conv_image.pl用)
 
 * MNIST.pm
-MNIST::load ���̂܂܃��[�h
-MNIST::load_half �����̃T�C�Y�Ń��[�h�B
-conv_*.pl��load_half���Ă�̂ŁA���̂܂܂��悯��Ώ���������B
-�ǂݍ��񂾍\����conv_csv.pl���Q�ƁB
+MNIST::load そのままロード
+MNIST::load_half 半分のサイズでロード。
+conv_*.plはload_halfしてるので、そのままがよければ書き換える。
+読み込んだ構造はconv_csv.pl等参照。
 
-* �ϊ��X�N���v�g
+* 変換スクリプト
 ** conv_csv.pl
-CSV�ɕϊ��B1�s1�f�[�^�B�擪�v�f�����x���B�ȍ~���x�N�g���B
+CSVに変換。1行1データ。先頭要素がラベル。以降がベクトル。
 
 ** conv_image.pl
-�e�L�g�E�ȉ摜�ɕϊ��B
+テキトウな画像に変換。
 
 ** conv_bin.pl
-Perl��Storable�B
+PerlのStorable。
 
-* MNIST�e�X�g
+* MNISTテスト
 ** bagging_nn.pl [95.76 (9576/10000), M=200,K=5]
 perl conv_bin.pl
 perl bagging_knn.pl
 
-�e������M�������_���ɃT���v�����O���čŋߖT���葥�ɂ�胉�x���𐄒�B
-���x���J��Ԃ��ŏ���K�񐄒肳�ꂽ���x���Ԃ��B
-�����̓��[�N���b�h^2�B�ŋߖT�������߂�΂����̂Ōv�Z��r���őł��؂邽�߂�4�������Đ^�񒆂̂ق�����v�Z�B
-M=50,K=3���炢���Ƃ����ԑ����Ȃ邯�ǐ��x�͗�����B
+各数字をM個ずつランダムにサンプリングして最近傍決定則によりラベルを推定。
+何度か繰り返し最初にK回推定されたラベル返す。
+距離はユークリッド^2。最近傍だけ求めればいいので計算を途中で打ち切るために4分割して真ん中のほうから計算。
+M=50,K=3くらいだとだいぶ速くなるけど精度は落ちる。
 
