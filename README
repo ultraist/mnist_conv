@@ -32,7 +32,7 @@ PerlのStorable。
 * MNISTテスト
 ** bagging_nn.pl [95.76% (9576/10000), M=200,K=5]
 perl conv_bin.pl
-perl bagging_knn.pl
+perl bagging_nn.pl
 
 各数字をM個ずつランダムにサンプリングして最近傍決定則によりラベルを推定。
 何度か繰り返し最初にK回推定されたラベル返す。
