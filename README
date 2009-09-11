@@ -30,7 +30,7 @@ CSVに変換。1行1データ。先頭要素がラベル。以降がベクトル
 PerlのStorable。
 
 * MNISTテスト
-** bagging_nn.pl [95.76 (9576/10000), M=200,K=5]
+** bagging_nn.pl [95.76% (9576/10000), M=200,K=5]
 perl conv_bin.pl
 perl bagging_knn.pl
 
