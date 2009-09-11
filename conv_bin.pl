@@ -15,7 +15,7 @@ make_mnist_bin(
 sub make_mnist_bin
 {
   my ($bin, $data_file, $label_file) = @_;
-  my ($dataset, $rows, $cols) = MNIST::load_heaf($data_file, $label_file);
+  my ($dataset, $rows, $cols) = MNIST::load_half($data_file, $label_file);
   nstore($dataset, $bin);
 }
 

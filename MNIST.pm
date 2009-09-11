@@ -10,7 +10,7 @@ sub load
   return _load(0, $data_file, $label_file);
 }
 
-sub load_heaf
+sub load_half
 {
   my ($data_file, $label_file) = @_;
   return _load(1, $data_file, $label_file);
@@ -18,7 +18,7 @@ sub load_heaf
 
 sub _load
 {
-  my ($heaf, $data_file, $label_file) = @_;
+  my ($half, $data_file, $label_file) = @_;
   my $data = new File::Binary($data_file) || Carp::croak("$data_file: $!\n");
   my $label = new File::Binary($label_file) || Carp::croak("$label_file:  $!\n");
   
@@ -46,9 +46,9 @@ sub _load
     push(@{$dataset->{$num}}, $vec);
   }
   
-  # heaf
-  if ($heaf) {
-    _conv_heaf($dataset, $rows, $cols);
+  # half size
+  if ($half) {
+    _conv_half($dataset, $rows, $cols);
     $rows = int($rows / 2);
     $cols = int($cols / 2);
   }
@@ -56,7 +56,7 @@ sub _load
   return ($dataset, $rows, $cols);
 }
 
-sub _conv_heaf
+sub _conv_half
 {
   my ($dataset, $rows, $cols) = @_;
   my $new_cols = int($cols / 2);
@@ -64,11 +64,11 @@ sub _conv_heaf
   
   foreach my $num (keys(%$dataset)) {
     my $mat = $dataset->{$num};
-    my $heaf_mat = [];
+    my $half_mat = [];
     
     foreach my $vec (@$mat) {
       # resize
-      my $heaf_vec = [];
+      my $half_vec = [];
       for (my $y = 0; $y < $new_rows; ++$y) {
         for (my $x = 0; $x < $new_cols; ++$x) {
           my $px = int(
@@ -77,12 +77,12 @@ sub _conv_heaf
           + $vec->[($y * 2 + 1) * $cols + $x * 2]
           + $vec->[($y * 2 + 1) * $cols + $x * 2 + 1])
           * 0.25);
-          $heaf_vec->[$y * $new_cols + $x] = $px;
+          $half_vec->[$y * $new_cols + $x] = $px;
         }
       }
-      push(@$heaf_mat, $heaf_vec);
+      push(@$half_mat, $half_vec);
     }
-    $dataset->{$num} = $heaf_mat;
+    $dataset->{$num} = $half_mat;
   }
 }
 

@@ -2,10 +2,10 @@ use strict;
 use warnings;
 use MNIST;
 
-#make_mnist_csv(
-#  "mnist_train.cvs",
-#  "train-images.idx3-ubyte",
-#  "train-labels.idx1-ubyte");
+make_mnist_csv(
+  "mnist_train.cvs",
+  "train-images.idx3-ubyte",
+  "train-labels.idx1-ubyte");
 make_mnist_csv(
   "mnist_test.cvs",
   "t10k-images.idx3-ubyte",
@@ -14,7 +14,7 @@ make_mnist_csv(
 sub make_mnist_csv
 {
   my ($csv, $data_file, $label_file) = @_;
-  my ($dataset, $rows, $cols) = MNIST::load_heaf($data_file, $label_file);
+  my ($dataset, $rows, $cols) = MNIST::load_half($data_file, $label_file);
   open(CSV, '>', $csv) || die "$csv: $!\n";
   
   foreach my $label (keys(%$dataset)) {
