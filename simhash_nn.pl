@@ -69,7 +69,8 @@ sub hamming
   return bit_count32($a ^ $b);
 }
 
-sub box_muller {
+sub box_muller
+{
   my ($u, $s) = @_;
   my ($rand1, $rand2) = (rand(1), rand(1));
   return ($s * sqrt(-2.0 * log($rand1)) * sin(2.0 * pi() * $rand2)) + $u;
@@ -144,8 +145,9 @@ sub make_simhash_index
     my $mat = $trainset->{$label};
     
     $simhash->{hash}->{$label} = [];
-    foreach my $vec (@$mat) {
-      push(@{$simhash->{hash}->{$label}}, calc_simhash($vec, $h, K));
+    for (my $i = 0; $i < scalar(@$mat); ++$i) {
+      my $vec = $mat->[$i];
+      $simhash->{hash}->{$label}->[$i] = calc_simhash($vec, $h, K);
       printf("calc_simhash .. %d\r", ++$c);
     }
   }
@@ -162,7 +164,6 @@ sub predict_label
 sub nn
 {
   my ($test_vec, $simhash, $trainset) = @_;
-  my %vote;
   my @result;
   my $label;
   my @nn;
