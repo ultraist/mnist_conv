@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use Storable qw(retrieve);
 use constant {
-  M => 200,
+  M => 600,
   K => 5
 };
 $| = 1;
