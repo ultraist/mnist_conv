@@ -19,7 +19,7 @@ sub make_mnist_image
   print "loading ..\r";
   
   my ($prefix, $data_file, $label_file) = @_;
-  my ($dataset, $rows, $cols) = MNIST::load($data_file, $label_file);
+  my ($dataset, $rows, $cols) = MNIST::load_heaf($data_file, $label_file);
   
   foreach my $label (keys(%$dataset)) {
     my @digit_imgs = ();
