@@ -102,7 +102,7 @@ sub cosine_dist
   my $n = norm($vec1) * norm($vec2);
   
   if ($n == 0.0) {
-    return 0.0;
+    return 2.0;
   }
   
   return 2.0 - (1.0 + dot($vec1, $vec2) / $n);
