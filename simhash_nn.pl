@@ -6,10 +6,11 @@ use Bit::Vector;
 use Math::Trig qw(pi);
 
 use constant {
-  EPS => 0,
+  EPS => 0, # 0-32
+  
   K => 32,
   MNIST_VEC_DIM => 196,
-  BIT_IN_CHAR => [
+  BITS_IN_8BIT => [
     0,1,1,2,1,2,2,3,1,2,2,3,2,3,3,4,
     1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
     1,2,2,3,2,3,3,4,2,3,3,4,3,4,4,5,
@@ -74,10 +75,10 @@ sub bit_count32
 {
   my $x = shift;
   return
-    BIT_IN_CHAR->[$x & 0xff] + 
-    BIT_IN_CHAR->[($x >> 8) & 0xff] + 
-    BIT_IN_CHAR->[($x >> 16) & 0xff] + 
-    BIT_IN_CHAR->[($x >> 24) & 0xff];
+    BITS_IN_8BIT->[$x & 0xff] + 
+    BITS_IN_8BIT->[($x >> 8) & 0xff] + 
+    BITS_IN_8BIT->[($x >> 16) & 0xff] + 
+    BITS_IN_8BIT->[($x >> 24) & 0xff];
 }
 
 sub hamming
