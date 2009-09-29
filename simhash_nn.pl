@@ -6,7 +6,7 @@ use Bit::Vector;
 use Math::Trig qw(pi);
 
 use constant {
-  EPS => 0,
+  EPS => 1,
   K => 32,
   MNIST_VEC_DIM => 196
 };
@@ -176,7 +176,7 @@ sub nn
       if ($hash_dist < $min_dist) {
         $min_dist = $hash_dist;
       }
-      if ($hash_dist >= $min_dist - EPS) {
+      if ($hash_dist <= $min_dist + EPS) {
         push(@nn, {
           label => $num, 
           dist => cosine_dist($test_vec, $trainset->{$num}->[$i])
