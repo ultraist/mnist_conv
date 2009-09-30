@@ -41,7 +41,7 @@ M=50,K=3くらいだとだいぶ速くなるけど精度は落ちる。
 
 ** simhash_nn.pl [91.07% (9107/10000)]
 perl conv_bin.pl
-perl minhash_nn.pl
+perl simhash_nn.pl
 
 コサイン距離のLSHによる近似最近傍探索でラベルを推定。
 
