@@ -6,8 +6,7 @@ use Bit::Vector;
 use Math::Trig qw(pi);
 
 use constant {
-  EPS => 0, # 0-32
-  
+  EPS => 1, # 0-32
   K => 32,
   MNIST_VEC_DIM => 196,
   BITS_IN_8BIT => [
@@ -34,6 +33,7 @@ $SIG{INT} = sub { print "\n"; die; };
 
 test();
 
+
 sub test 
 {
   #srand(time());
@@ -47,7 +47,12 @@ sub test
   my $correct = 0;
   my $simhash;
   
-  print "loading .. ok\n";
+  print "loading .. done\n";
+  
+  # idf
+  print "conv idf .. \r";
+  my $idf = idf($trainset);
+  print "idf .. done\n";
   
   if (-f "simhash.bin") {
     $simhash = retrieve("simhash.bin");
@@ -59,8 +64,14 @@ sub test
   foreach my $test_label (sort { $a <=> $b } keys(%$testset)) {
     my $test_mat = $testset->{$test_label};
     foreach my $test_vec (@$test_mat) {
-      my $label = predict_label($test_vec, $simhash, $trainset);
+      # conv idf
+      for (my $i = 0; $i < scalar(@$test_vec); ++$i) {
+        if ($test_vec->[$i] != 0.0) {
+          $test_vec->[$i] *= $idf->[$i];
+        }
+      }
       # test
+      my $label = predict_label($test_vec, $simhash, $trainset);
       if ($label == $test_label) {
         ++$correct;
       }
@@ -69,6 +80,43 @@ sub test
     }
   }
   print "\n";
+}
+
+sub idf
+{
+  my $trainset = shift;
+  my $idf = [];
+  my $d = 0;
+  my $e = exp(1);
+  
+  foreach my $label (keys(%$trainset)) {
+    my $mat = $trainset->{$label};
+    for (my $i = 0; $i < scalar(@$mat); ++$i) {
+      my $vec = $mat->[$i];
+      ++$d;
+      for (my $j = 0; $j < scalar(@$vec); ++$j) {
+        if ($vec->[$j] != 0.0) {
+          ++$idf->[$j];
+        }
+      }
+    }
+  }
+  for (my $i = 0; $i < scalar(@$idf); ++$i) {
+    $idf->[$i] = $idf->[$i] ? log($e + 1.0 / $idf->[$i]):1;
+  }
+  print join(",", @$idf),"\n";
+  foreach my $label (keys(%$trainset)) {
+    my $mat = $trainset->{$label};
+    for (my $i = 0; $i < scalar(@$mat); ++$i) {
+      my $vec = $mat->[$i];
+      for (my $j = 0; $j < scalar(@$vec); ++$j) {
+        if ($vec->[$j] != 0.0) {
+          $vec->[$j] *= $idf->[$j];
+        }
+      }
+    }
+  }
+  return $idf;
 }
 
 sub bit_count32
@@ -132,10 +180,7 @@ sub calc_simhash
   my $hash = 0;
   
   for (my $i = 0; $i < $k; ++$i) {
-    my $th = 0.0;
-    for (my $j = 0; $j < scalar(@$vec); ++$j) {
-      $th += $vec->[$j] * $h->[$i]->[$j];
-    }
+    my $th = dot($vec, $h->[$i]);
     if ($th >= 0) {
       $hash |= (1 << $i);
     }
@@ -187,8 +232,9 @@ sub nn
   my @nn;
   my $hash = calc_simhash($test_vec, $simhash->{h}, K);
   my $min_dist = 1e64;
+  my %vote;
   
-  foreach my $num (sort keys(%{$simhash->{hash}})) {
+  foreach my $num (keys(%{$simhash->{hash}})) {
     my $mat = $simhash->{hash}->{$num};
     for (my $i = 0; $i < scalar(@$mat); ++$i) {
       my $hash_dist = hamming($hash, $mat->[$i]);
@@ -203,9 +249,14 @@ sub nn
       }
     }
   }
-  # 1-nearest neighbor
+  # 3-nearest neighbor
   @nn = sort { $a->{dist} <=> $b->{dist} } @nn;
-  $label = $nn[0]->{label};
+  for (my $i = 0; $i < @nn; ++$i) {
+    $label = $nn[$i]->{label};
+    if (++$vote{$label} >= 3) {
+      last;
+    }
+  }
   
   return $label;
 }
